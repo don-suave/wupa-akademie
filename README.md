@@ -22,7 +22,6 @@ Lernspiel und gemeinsames Wörterbuch für die Geheimsprache. Mehrere Leute meld
 | `src/seed.js` | Die 51 Startwörter, werden nur beim ersten Start eingespielt |
 | `scripts/build.mjs` | Baut `public/` aus der App |
 | `scripts/smoke.mjs` | Prüft den laufenden Server (rund 30 Prüfungen) |
-| `.github/workflows/deploy.yml` | Veröffentlicht bei jedem Push auf `main` |
 
 ## Lokal ausprobieren
 
@@ -46,14 +45,16 @@ Zum Zurücksetzen der lokalen Daten den Ordner `.wrangler/` löschen.
 
 Eine eigene Adresse (zum Beispiel `wupa.deinedomain.de`) stellst du im Cloudflare-Dashboard unter Workers, Einstellungen, Domains und Routen ein.
 
-## Automatisch bei jedem Push veröffentlichen (GitHub)
+## Automatisch bei jedem Push veröffentlichen (Cloudflare mit GitHub)
 
-1. Ein GitHub-Repository anlegen und diesen Ordner hochladen (Branch `main`).
-2. In Cloudflare ein API-Token erstellen: Profil, API-Tokens, Vorlage "Edit Cloudflare Workers".
-3. Im GitHub-Repository unter Settings, Secrets and variables, Actions zwei Secrets anlegen:
-   - `CLOUDFLARE_API_TOKEN`
-   - `CLOUDFLARE_ACCOUNT_ID` (steht im Cloudflare-Dashboard rechts neben dem Konto)
-4. Ab jetzt veröffentlicht jeder Push auf `main` die neue Version. Daten und Clubcode bleiben dabei erhalten.
+Ohne API-Token, direkt im Cloudflare-Dashboard:
+
+1. Workers & Pages, Create, Import a repository. GitHub verbinden und dieses Repository wählen (Branch `main`).
+2. Build command: `npm run build`. Deploy command: `npx wrangler deploy`. Der Worker-Name muss `wupa-akademie` sein.
+3. Save and Deploy.
+4. Beim Worker unter Settings, Variables and Secrets das Secret `CLUB_CODE` anlegen.
+
+Ab jetzt veröffentlicht jeder Push auf `main` die neue Version. Daten und Clubcode bleiben dabei erhalten.
 
 Der Clubcode liegt nicht in GitHub, sondern nur bei Cloudflare.
 
