@@ -1,0 +1,20 @@
+{
+  "name": "wupa-akademie",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Lernspiel und gemeinsames Wörterbuch für die Geheimsprache, läuft auf Cloudflare Workers.",
+  "scripts": {
+    "build": "node scripts/build.mjs",
+    "dev": "npm run build && wrangler dev",
+    "deploy": "npm run build && wrangler deploy",
+    "smoke": "node scripts/smoke.mjs",
+    "check": "node --check src/worker.js && node --check app/shim.js && node scripts/build.mjs"
+  },
+  "devDependencies": {
+    "wrangler": "^4.158.0"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}
