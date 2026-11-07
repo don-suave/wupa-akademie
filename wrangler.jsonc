@@ -11,5 +11,6 @@
     "bindings": [{ "name": "CLUB", "class_name": "Club" }]
   },
   "migrations": [{ "tag": "v1", "new_sqlite_classes": ["Club"] }],
+  "keep_vars": true,
   "observability": { "enabled": true }
 }
