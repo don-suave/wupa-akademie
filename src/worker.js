@@ -63,6 +63,9 @@ const pub = (u) => ({ id: u.id, name: u.name, color: u.color });
 export default {
   async fetch(request, env) {
     const url = new URL(request.url);
+    if (url.pathname === '/api/version') {
+      return json({ clubcode: !!(env.CLUB_CODE && String(env.CLUB_CODE).trim()) });
+    }
     if (url.pathname.startsWith('/api/')) {
       const stub = env.CLUB.get(env.CLUB.idFromName('main'));
       return stub.fetch(request);

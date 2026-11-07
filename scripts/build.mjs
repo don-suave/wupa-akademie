@@ -2,6 +2,7 @@
 // app/app.html ist dieselbe Datei, die auch in Claude läuft. Hier bekommt sie ein
 // vollständiges HTML-Gerüst und den Server-Anschluss (shim.js).
 import { readFileSync, writeFileSync, mkdirSync, copyFileSync } from 'node:fs';
+import { execSync } from 'node:child_process';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -42,10 +43,16 @@ ${body}
 </html>
 `;
 
+const pkg = JSON.parse(readFileSync(join(root, 'package.json'), 'utf8'));
+let sha = process.env.WORKERS_CI_COMMIT_SHA || '';
+if (!sha) { try { sha = execSync('git rev-parse HEAD', { cwd: root, stdio: ['ignore', 'pipe', 'ignore'] }).toString(); } catch {} }
+const version = { version: pkg.version, build: sha.trim().slice(0, 7) || 'lokal', built: new Date().toISOString() };
+
 const out = join(root, 'public');
 mkdirSync(out, { recursive: true });
 writeFileSync(join(out, 'index.html'), html);
 copyFileSync(join(root, 'app/shim.js'), join(out, 'shim.js'));
+writeFileSync(join(out, 'version.json'), JSON.stringify(version));
 writeFileSync(
   join(out, '_headers'),
   `/*
@@ -56,6 +63,9 @@ writeFileSync(
   Cache-Control: no-cache
 /index.html
   Cache-Control: no-cache
+/version.json
+  Cache-Control: no-cache
 `,
 );
+console.log('Version', version.version, version.build);
 console.log('public/ gebaut:', (html.length / 1024).toFixed(0), 'KB');

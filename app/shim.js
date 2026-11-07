@@ -40,6 +40,32 @@
   }
 
   /* ---------- Anmeldung ---------- */
+  // Release-Version: steht immer unten rechts und im Anmeldefenster.
+  var verText = 'Version …';
+  function paintVersion() {
+    var els = document.querySelectorAll('[data-wver]');
+    for (var i = 0; i < els.length; i++) els[i].textContent = verText;
+  }
+  function loadVersion() {
+    Promise.all([
+      fetch('/version.json', { cache: 'no-store' }).then(function (r) { return r.json(); }).catch(function () { return null; }),
+      fetch('/api/version', { cache: 'no-store' }).then(function (r) { return r.json(); }).catch(function () { return null; })
+    ]).then(function (a) {
+      var v = a[0], c = a[1];
+      verText = 'Version ' + (v ? v.version + ' · ' + v.build : '?') + (c ? ' · Clubcode ' + (c.clubcode ? 'gesetzt' : 'FEHLT') : '');
+      paintVersion();
+    });
+  }
+  function addBadge() {
+    if (document.querySelector('[data-wver-badge]')) return;
+    var b = document.createElement('div');
+    b.setAttribute('data-wver', ''); b.setAttribute('data-wver-badge', '');
+    b.style.cssText = 'position:fixed;right:6px;bottom:4px;z-index:101;font:12px system-ui,sans-serif;opacity:.65;pointer-events:none;color:var(--ink,#111)';
+    document.body.appendChild(b); paintVersion();
+  }
+  loadVersion();
+  if (document.body) addBadge(); else document.addEventListener('DOMContentLoaded', addBadge);
+
   var overlay = null;
   function showJoin(msg) {
     if (overlay) { var er = overlay.querySelector('[data-err]'); if (er) er.textContent = msg || ''; return; }
@@ -62,9 +88,11 @@
       '<label for="wj-pin" style="' + lbl + '">Dein PIN (mindestens 4 Zeichen). Neu hier? Such dir einen aus und merk ihn dir.</label>' +
       '<input id="wj-pin" type="password" maxlength="32" autocomplete="current-password" style="' + fld + '">' +
       '<div data-err role="alert" style="color:var(--bad,#c00);font-size:17px"></div>' +
+      '<div data-wver style="font-size:14px;opacity:.65"></div>' +
       '<button type="submit" style="min-height:54px;font:inherit;font-family:var(--font-display,inherit);font-size:24px;cursor:pointer;border:2.5px solid var(--ink,#111);border-radius:16px 5px 14px 6px / 6px 14px 5px 16px;background:var(--pink,#d63a69);color:var(--on-pink,#fff);box-shadow:3px 3px 0 var(--ink,#111)">Los geht\u2019s</button>';
     overlay.appendChild(box);
     document.body.appendChild(overlay);
+    paintVersion();
     var errEl = box.querySelector('[data-err]');
     errEl.textContent = msg || '';
     box.addEventListener('submit', function (e) {
