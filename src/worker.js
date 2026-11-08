@@ -7,7 +7,7 @@ import { SEED } from './seed.js';
 const WORLD_IDS = ['w1', 'w2', 'w3', 'w4', 'w5', 'w6', 'w7', 'eigen'];
 const ID_RULES = { words: /^[bc][a-z0-9]{0,30}$/, history: /^[A-Za-z0-9_-]{1,40}$/ };
 const MAX_BODY = 8 * 1024;
-const MAX_PROGRESS = 32 * 1024;
+const MAX_PROGRESS = 128 * 1024;
 const MAX_WORDS = 3000;
 const MAX_USERS = 60;
 const KEEP_HISTORY = 200;

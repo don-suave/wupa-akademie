@@ -26,6 +26,7 @@
     var opts = { method: method, headers: {} };
     if (token) opts.headers.authorization = 'Bearer ' + token;
     if (body !== undefined) { opts.headers['content-type'] = 'application/json'; opts.body = JSON.stringify(body); }
+    if (path === '/api/progress' && opts.body && opts.body.length < 60000) opts.keepalive = true;
     return fetch(path, opts).then(function (res) {
       return res.json().catch(function () { return {}; }).then(function (data) {
         if (res.ok) return data;
